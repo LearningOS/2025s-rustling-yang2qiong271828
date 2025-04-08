@@ -15,7 +15,6 @@
 // hint.
 
 
-
 use std::collections::HashMap;
 
 // A structure to store the goal details of a team.
@@ -41,16 +40,23 @@ fn build_scores_table(results: String) -> HashMap<String, Team> {
         // team_1.
         let team_1 = Team { goals_scored: team_1_score, goals_conceded: team_2_score};
         let team_2 = Team { goals_scored: team_2_score, goals_conceded: team_1_score};
+        if scores.contains_key(&team_1_name) {
+            scores.entry(team_1_name.to_string()).and_modify(|team_1_old| { 
+                team_1_old.goals_scored += team_1.goals_scored;
+                team_1_old.goals_conceded += team_1.goals_conceded; 
+            });
+        } else {
+            scores.entry(team_1_name.to_string()).or_insert(Team { goals_scored: team_1_score, goals_conceded: team_2_score});
+        }
 
-        scores.entry(team_1_name.to_string()).or_insert(Team { goals_scored: team_1_score, goals_conceded: team_2_score});
-        
-        scores.entry(team_1_name.to_string()).and_modify(|team_1_old| { team_1_old.goals_conceded += team_1.goals_conceded; });
-         
-
-        scores.entry(team_2_name.to_string()).or_insert(Team { goals_scored: team_2_score, goals_conceded: team_1_score});
-
-        scores.entry(team_2_name.to_string()).and_modify(|team_2_old| { team_2_old.goals_scored += team_2.goals_scored; });
-        
+       if scores.contains_key(&team_2_name) {
+            scores.entry(team_2_name.to_string()).and_modify(|team_2_old| { 
+                team_2_old.goals_scored += team_2.goals_scored;
+                team_2_old.goals_conceded += team_2.goals_conceded; 
+            });            
+       } else {
+            scores.entry(team_2_name.to_string()).or_insert(Team { goals_scored: team_2_score, goals_conceded: team_1_score});
+       }
 
     }
     return scores;
