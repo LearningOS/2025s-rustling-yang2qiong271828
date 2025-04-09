@@ -20,7 +20,7 @@
 //
 // No hints this time!
 
-// I AM NOT DONE
+
 
 pub enum Command {
     Uppercase,
@@ -35,37 +35,28 @@ mod my_module {
     pub fn transformer(input: Vec<(String, Command)>) -> Vec<String> {
         // TODO: Complete the output declaration!
         let mut output: Vec<String> = vec![];
-        let mut index = 0;
-        for (string, command) in input.iter() {
+        for (string, command) in input.into_iter() {
             // TODO: Complete the function body. You can do it!
             match command {
                 Command::Uppercase => {
-                    output[index] = string.to_uppercase();
-                    index += 1;
+                    output.push(string.to_uppercase());
                 }
 
                 Command::Trim => {
-                    output[index] = <&String as Into<String>>::into(string).trim().to_string();
-                    index += 1;
+                    output.push(string.trim().to_string());
                 }
 
-                Command::Append(0_usize) => {
+                Command::Append(number) => {
 
-                    let new_str = vec![string, ""];
-                    for n in 1..0_usize {
-                        new_str.push(String::from("bar"));
+                    let mut new_str = String::from(string);
+                    let mut count = 0;
+                    while count < number {
+                        new_str.push_str("bar");
+                        count += 1;
                     }
-                    output[index] = new_str.concat();
-                    index += 1;
-                }
+                    
+                    output.push(new_str);
 
-                Command::Append(1_usize..) => {
-                    let new_str = vec![string];
-                    for n in 1..1_usize {
-                        new_str.push(&String::from("bar"));
-                    }
-                    output[index] = new_str.concat();
-                    index += 1;
                 }
 
             }
@@ -88,6 +79,7 @@ mod tests {
             ("foo".into(), Command::Append(1)),
             ("bar".into(), Command::Append(5)),
         ]);
+ 
         assert_eq!(output[0], "HELLO");
         assert_eq!(output[1], "all roads lead to rome!");
         assert_eq!(output[2], "foobar");
