@@ -2,7 +2,7 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
+
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
@@ -69,15 +69,45 @@ impl<T> LinkedList<T> {
             },
         }
     }
-	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
+	pub fn merge(mut list_a:LinkedList<T>, mut list_b:LinkedList<T>) -> Self
+    where
+        T: Ord,
 	{
-		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
+		let mut result = LinkedList::new();
+
+        let mut ptr_a = list_a.start;
+        let mut ptr_b = list_b.start;
+
+        // 逐个比较两个链表的节点
+        while let (Some(a), Some(b)) = (ptr_a, ptr_b) {
+            let a_ref = unsafe { &*a.as_ptr() };
+            let b_ref = unsafe { &*b.as_ptr() };
+
+            if a_ref.val <= b_ref.val {
+                result.add(unsafe { std::ptr::read(&a_ref.val) });
+                ptr_a = a_ref.next;
+            } else {
+                result.add(unsafe { std::ptr::read(&b_ref.val) });
+                ptr_b = b_ref.next;
+            }
         }
-	}
+
+        // 把剩余节点拷贝过来
+        while let Some(a) = ptr_a {
+            let a_ref = unsafe { &*a.as_ptr() };
+            result.add(unsafe { std::ptr::read(&a_ref.val) });
+            ptr_a = a_ref.next;
+        }
+
+        while let Some(b) = ptr_b {
+            let b_ref = unsafe { &*b.as_ptr() };
+            result.add(unsafe { std::ptr::read(&b_ref.val) });
+            ptr_b = b_ref.next;
+        }
+
+        result
+    }
+    
 }
 
 impl<T> Display for LinkedList<T>
